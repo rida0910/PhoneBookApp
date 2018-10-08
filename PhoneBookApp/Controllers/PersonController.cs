@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using System.Data.Entity;
 
 namespace PhoneBookApp.Controllers
 {
@@ -53,12 +54,11 @@ namespace PhoneBookApp.Controllers
         // GET: Person/Create
         public ActionResult Create()
         {
-            //ViewBag.AddedBy = new SelectList(db.AspNetUsers, "Id", "Email");
+            ViewBag.AddedBy = new SelectList(db.AspNetUsers, "Id", "Email");
             return View();
         }
 
         // POST: Person/Create
-        [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult Create(PersonViewModel Modelperson)
         {
@@ -98,21 +98,35 @@ namespace PhoneBookApp.Controllers
         public ActionResult Edit(int id)
         {
             Person person = db.People.Find(id);
-            if (person == null)
-            {
-                return HttpNotFound();
-            }
             ViewBag.AddedBy = new SelectList(db.AspNetUsers, "Id", "Email", person.AddedBy);
             return View(person);
         }
 
         // POST: Person/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, PersonViewModel Modelperson)
         {
             try
             {
                 // TODO: Add update logic here
+                Person person = new Person();
+                person.FirstName = Modelperson.FirstName;
+                person.MiddleName = Modelperson.MiddleName;
+                person.LastName = Modelperson.LastName;
+                person.AddedOn = DateTime.Now;
+                person.AddedBy = User.Identity.GetUserId();
+                person.UpdateOn = DateTime.Now;
+                person.DateOfBirth = Modelperson.DateOfBirth;
+                person.HomeAddress = Modelperson.HomeAddress;
+                person.HomeCity = Modelperson.HomeCity;
+                person.FaceBookAccountId = Modelperson.FaceBookAccountId;
+                person.LinkedInId = Modelperson.LinkedInId;
+                person.TwitterId = Modelperson.TwitterId;
+                person.EmailId = Modelperson.EmailId;
+                person.ImagePath = Modelperson.ImagePath;
+
+                db.Entry(person).State = EntityState.Modified;
+                db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -125,7 +139,8 @@ namespace PhoneBookApp.Controllers
         // GET: Person/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Person person = db.People.Find(id);
+            return View(person);
         }
 
         // POST: Person/Delete/5
@@ -135,7 +150,9 @@ namespace PhoneBookApp.Controllers
             try
             {
                 // TODO: Add delete logic here
-
+                Person person = db.People.Find(id);
+                db.People.Remove(person);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
