@@ -42,14 +42,18 @@ namespace PhoneBookApp.Controllers
         // GET: Person/Details/5
         public ActionResult Details(int id)
         {
-
-            return View();
+            Person person = db.People.Find(id);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+            return View(person);
         }
 
         // GET: Person/Create
         public ActionResult Create()
         {
-            ViewBag.AddedBy = new SelectList(db.AspNetUsers, "Id", "Email");
+            //ViewBag.AddedBy = new SelectList(db.AspNetUsers, "Id", "Email");
             return View();
         }
 
