@@ -160,5 +160,9 @@ namespace PhoneBookApp.Controllers
                 return View();
             }
         }
+        public ActionResult DashBoard()
+        {
+            return View();
+        }
     }
 }
