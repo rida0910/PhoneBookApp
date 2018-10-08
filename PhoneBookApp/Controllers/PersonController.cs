@@ -97,7 +97,13 @@ namespace PhoneBookApp.Controllers
         // GET: Person/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Person person = db.People.Find(id);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.AddedBy = new SelectList(db.AspNetUsers, "Id", "Email", person.AddedBy);
+            return View(person);
         }
 
         // POST: Person/Edit/5
